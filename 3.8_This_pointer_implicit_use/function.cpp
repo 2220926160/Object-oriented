@@ -13,4 +13,4 @@ void Point::display()
 }
 
 Point::~Point()
-{}
+{} 
