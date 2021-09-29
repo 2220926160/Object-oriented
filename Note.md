@@ -170,6 +170,54 @@ delete[]<指针名>
 
 ##### 3.6 类的静态成员
 
+### 第4章 继承机制
+
+#### 5.3 成员函数中调用虚函数
+
+- 一个基类或派生类的成员函数中可以直接调用该类等级中的虚函数。
+
+- 在满足共有继承情况下，成员函数中调用函数将采用动态联编。
+
+  ```c++
+  // 【例5.8】
+  // 输出结果：This is Subclass func1
+  
+  #include<iostream>
+  
+  using namespace std;
+  
+  class Base
+  {
+  public:
+      virtual void func1()
+      {
+          cout<<"This is Base func1"<<endl;
+      }
+      void func2(){func1();}
+  };
+  class Subclass:public Base
+  {
+      virtual void func1()
+      {
+          cout<<"This is Subclass func1"<<endl;
+      }
+  };
+  int main()
+  {
+      Subclass sc;
+      sc.func2();
+      return 0;
+  }
+  ```
+
+  #### 5.4 构造函数和析构函数中调用虚函数
+
+### 第5章 多态性和虚函数
+
+### 第6章 运算符重载
+
+### 第7章 模板
+
 
 
 
