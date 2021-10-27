@@ -170,13 +170,103 @@ delete[]<指针名>
 
 ##### 3.6 类的静态成员
 
+
+
 ### 第4章 继承机制
+
+
+
+### 第5章 多态性和虚函数
+
+#### 5.2 虚函数
+
+##### 5.2.1 虚函数的作用
+
+- 虚函数是一个成员函数，该成员函数在基类内部声明并且被派生类重新定义。
+
+- 虚函数的定义格式：
+
+  ```c++
+  vitual <返回值类型> <函数名> (<形式参数表>)
+  {
+  	<函数体>
+  }
+  ```
+
+- 动态联编需满足3个条件：1、类之间满足兼容规则。2、要声明虚函数。3、有成员函数来调用或是通过指针、引用来访问虚函数。
+
+  ```c++
+  // 【例5.3】
+  // 动态联编
+  
+  #include<iostream>
+  
+  const double PI = 3.14;
+  
+  using namespace std;
+  
+  class Figure  // 定义基类
+  {
+  private:
+      /* data */
+  public:
+      Figure(/* args */){};
+      ~Figure(){};
+      virtual double area() const{return 0.0;} // 定义为虚函数 
+  };
+  
+  class Circle:public Figure      // 定义派生类，公有继承方式
+  {
+  private:
+      double R;
+  public:
+      Circle(double MyR) {R = MyR;};
+      virtual double area() const {return R * PI * R;} // 定义为虚函数
+      ~Circle() {};
+  };
+  
+  class Rectangle:public Figure   // 定义派生类，公有继承方式
+  {
+  private:
+      double L, W;
+  public:
+      Rectangle(double MyL, double MyW) {L = MyL; W = MyW;};
+      virtual double area() const {return L * W;} // 定义为虚函数
+      ~Rectangle() {};
+  };
+  
+  void function(Figure &p)  // 形参为基类的引用
+  {
+      cout << p.area() << endl;
+  }
+  
+  int main()
+  {
+      Figure fig;                     // 基类Figure对象
+      cout << "Area of figure is ";
+      function(fig);
+  
+      Circle cir(3.0);                // Circle 派生类对象
+      cout << "Area of circle is ";
+      function(cir);
+  
+      Rectangle rec(4.0, 5.0);        // Rectangle 派生类对象
+      cout << "Area of rectangle is ";
+      function(rec);
+  
+      return 0;
+  }
+  ```
+
+##### 5.2.2  虚函数与一般重载函数的区别
+
+##### 5.2.3  继承虚属性
 
 #### 5.3 成员函数中调用虚函数
 
 - 一个基类或派生类的成员函数中可以直接调用该类等级中的虚函数。
 
-- 在满足共有继承情况下，成员函数中调用函数将采用动态联编。
+- 在满足共有继承情况下，成员函数中调用函数将采用**动态联编**。
 
   ```c++
   // 【例5.8】
@@ -210,11 +300,109 @@ delete[]<指针名>
   }
   ```
 
-  #### 5.4 构造函数和析构函数中调用虚函数
+  
 
-### 第5章 多态性和虚函数
+#### 5.4 构造函数和析构函数中调用虚函数
+
+- 派生类的默认构造函数将包含它的基类的默认构造函数。
+- 派生类的默认析构函数将包含它的基类的默认析构函数。
+
+#### 5.5 纯虚函数和抽象类
+
+##### 5.5.1 纯虚函数
+
+- 说明纯虚函数的一般形式：
+
+```c++
+virtual <返回值类型><函数名>(<形式参数表>) = 0
+```
+
+```c++
+// 【例5.10】
+// 用纯虚函数改写【例5.3】
+
+#include<iostream>
+
+const double PI = 3.14;
+
+using namespace std;
+
+class Figure 						 // 定义基类
+{
+private:
+    /* data */
+public:
+    Figure(/* args */){};
+    ~Figure(){};
+    virtual double area() const = 0; // 定义为纯虚函数 
+};
+
+class Circle:public Figure      	 // 定义派生类，公有继承方式
+{
+private:
+    double R;
+public:
+    Circle(double MyR) {R = MyR;};
+    virtual double area() const {return R * PI * R;} // 定义为虚函数
+    ~Circle() {};
+};
+
+class Rectangle:public Figure 	     // 定义派生类，公有继承方式
+{
+private:
+    double L, W;
+public:
+    Rectangle(double MyL, double MyW) {L = MyL; W = MyW;};
+    virtual double area() const {return L * W;}		 // 定义为虚函数
+    ~Rectangle() {};
+};
+
+void function(Figure &p) 			 // 形参为基类的引用
+{
+    cout << p.area() << endl;
+}
+
+int main()
+{ 
+    Circle cir(3.0);                 // Circle 派生类对象
+    cout << "Area of circle is ";
+    function(cir);
+
+    Rectangle rec(4.0, 5.0);         // Rectangle 派生类对象
+    cout << "Area of rectangle is ";
+    function(rec);
+
+    return 0;
+}
+/********** Figure 类中的纯虚函数area()仅起到为派生类提供一个一致的接口作用 **********/
+```
+
+
+
+##### 5.5.2 抽象类
+
+- 一个类中可以说明多个纯虚数，对于包含有纯虚函数的类被称为抽象类。
+
+- 一个抽象类只能作为基类来派生新类，不能说明抽象类的对象。
+
+  ```C++
+  /******** 例如【5.10】 *******/
+  Figure fig;            		 // 不能说明抽象类的对象
+  Figure func1();        		 // 抽象类不能用作返回值
+  int func2(Figure);     		 // 抽象类不能用作参数类型
+  
+  void function&(Figure &p);   // 可以说明指向抽象类对象的指针
+  ```
+
+#### 5.6 虚析构函数
+
+##### 5.6.1 虚析构函数的定义和使用
+
+##### 5.6.2 虚析构函数的必要性
 
 ### 第6章 运算符重载
+
+### 
 
 ### 第7章 模板
 
